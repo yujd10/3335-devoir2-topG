@@ -1,0 +1,79 @@
+#!/usr/bin/perl
+#
+# Convert interest.acl94.txt into interest.arff
+# [Skeleton for code, showing most of the relevant "gotchas"]
+
+my @lines = <STDIN>;   # Slurp in entire file; use only for small files!
+my $linenum = 0;
+
+foreach my $line (@lines) {
+
+    # Ignore $$ separator lines
+    next if ($line =~ /^\s*\$\$\s*$/);
+
+    my @words;
+    my @tags;
+
+
+    # Clean up line formatting, e.g. get rid of brackets, ====
+    ...
+
+    # Convert plural to singular for interest(s), lose underscore in sense labels
+    # since WEKA doesn't like punctuation in its data items
+    # e.g. interests_6 becomes interest6
+    ...
+
+    # Get word/tag pairs
+    for ($i = 0; $i < @pairs; ++$i)
+    {
+        ...
+
+        # Replace all punctuation within values with X, since WEKA doesn't like punctuation
+        # (e.g. u.s. becomes uXsX)
+        # Except %, which turns into PERCENT (worth keeping for this problem!)
+
+        ...
+
+        # (For optional experiment with coarser sense distinctions)
+        # Collapse interest1...interest4   to interestA (interest=caring about)
+        # Collapse interest5 and interest6 to interestB (interest=financial)
+
+        ...
+    }
+
+    # Go through this sentence
+    for ($i = 0; $i < @pairs; ++$i)
+    {
+        if ($words[$i] =~ /^interest[0-9AB]/)
+        {
+            # This is the target word position.  Record features around it for this sentence.
+            # Let prevword, prevtag = NULL if interest is first word in sentence
+            # Let nextword, nexttag = NULL if interest is last  word in sentence
+
+            ...
+        }
+        else
+        {
+            # For other non-target words, just record the word and tag as having occurred,
+            # since we will need to include them in the lists of values for this nominal
+            # @attribute in the header.
+
+            ...
+        }
+    }
+
+    ++$linenum;
+}
+
+# Build nominal attribute value lists containing recorded words (for prevword,nextword)
+# and tags (for prevtag, nexttag)
+
+...
+
+# Output .arff format (header, then one line of attributes and class for each sentence )
+
+
+...
+
+
+
