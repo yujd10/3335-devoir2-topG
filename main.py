@@ -1,4 +1,9 @@
 import re
+import numpy as np
+import nltk
+import sklearn
+from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.feature_extraction.text import CountVectorizer
 
 def find_nom_groups(str):
     return re.findall(r'\[.*?\]', str)
