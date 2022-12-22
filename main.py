@@ -57,13 +57,7 @@ def get_interests_from_liste(index_liste, liste):
 
 # liang ge interest de qingkuang, zhuyi quchu *
 def get_context(indexes, liste, window_size):
-
-
-
-
-
-
-    
+    pass
 
 if __name__ == "__main__":
     count = 0
