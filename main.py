@@ -194,6 +194,11 @@ if __name__ == "__main__":
     
     print(labels)
 
+    #task: 1. combine train_x and labels
+    #      2. split train_x and labels into train and test
+    #      3. train the model
+    #      4. test the model
+
     
 
     # print("steamed_context_word_tfidf", steamed_context_word_tfidf.shape)
