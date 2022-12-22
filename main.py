@@ -5,20 +5,19 @@ import nltk
 import sklearn
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import CountVectorizer
+import regex as re
 
-def find_nom_groups(str):
-    return re.findall(r'\[.*?\]', str)
 
-def find_interests(str):
-    # find all the index of interests in the phrase
-    return re.findall(r'(?i)\*?interests?_?[0-9]?', str)
 
 def eliminate_brackets(str):
     return re.sub(r'\[|\]', '', str)
 
 def elimimate_equals(str):
-    # eliminate ========.... at the beginning of the phrase
-    return re.sub(r'^=+ ', '', str)
+    # eliminate all occurences of ========.... in the str 
+    return re.sub(r'=+', '', str)
+
+def eliminate_MGMNP(str):
+    return re.sub(r'MGMNP', '', str)
 
 def split_by_space(str):
     return re.split(r'\s+', str)
@@ -27,43 +26,49 @@ def extract_word(str):
     return re.split(r'/', str)[0]
 
 def extract_pos(str):
-    return re.split(r'/', str)[1]
+    try:
+        return re.split(r'/', str)[1]
+    except:
+        print("error", str)
+        return None
 
 
 def get_interest_class(str):
     """
     Interest_n/{string} ---> n
-    *Interest" ---> -1  
+    *Interest" ---> -1   (we do not need this anymore, so just ignore this line)
     """
-    if str[0] == '*':
-        return -1
-    else:
-        return int(str.split('_')[1])
+    # if str[0] == '*':
+    #     return -1
+    # else:
+    #     return int(str.split('_')[1][0])
+    return int(str.split('_')[1][0])
 
 def find_interests_index(liste):
     """
-    find all the index of interests((?i)\*?interests?_?[0-9]?) in a list of words 
-    for example:["yuyang", "giegie", "*interesT", "interest_1/NN"] ---> [2, 3]
+    find all the index of interests(^(?i)interests?_?[0-9]?) in a list of words 
+    for example:["yuyang", "giegie", "*interesT/NN", "interest_1/NN"] ---> [2, 3]
     """
-    result = [i for i, word in enumerate(liste) if re.search(r'(?i)\*?interests?_?[0-9]?', word)]
+    result = [i for i, word in enumerate(liste) if re.search(r'^(?i)interests?_[0-9]?', word)]
+    # write a version using loop
+    result = []
+    for i in range(len(liste)):
+        if re.search(r'^(?i)*?interests?_[0-9]?', liste[i]):
+            result.append(i)
+            if liste[i][0] == '*':
+                liste[i] = liste[i][1:]
+        # modify the second case in another funciton.
+
+
     if len(result) == 0:
         print("Xiong gie gie says: no interest, no people")
         return None
 
     return result
 
-def get_interests_from_liste(index_liste, liste):
-    return [liste[i] for i in index_liste]
 
-# liang ge interest de qingkuang, zhuyi quchu *
-def get_context(indexes, liste, window_size):
+#def get_context(indexes, liste, window_size):
 
-
-
-
-
-
-    
 
 if __name__ == "__main__":
     count = 0
@@ -72,13 +77,73 @@ if __name__ == "__main__":
         for i in file :
             if i!="$$\n":
                 phrases.append(i.strip())
-    phrase_1 =phrases[0]
-    phrase_2 = "====================================== [ odds/NNS ] and/CC [ ends/NNS ] ====================================== despite/IN [ growing/VBG Interest_1/NN ] in/IN [ the/DT environment/NN ] ,/, [ u.s./NP consumers/NNS ] have/VBP n't/RB shown/VBN [ much/JJ *IntErest/NN ] in/IN [ refillable/JJ packages/NNS ] for/IN [ household/NN products/NNS ] ./. "
-    print(phrase_1)
-    GNs = find_interests(phrase_2)
-    print(GNs)
+    # 大的思路是， eliminate_equals---->
+    #             eliminate_brackets----->
+    #              eliminate_MGMNP------>
+    #              lower()????????????????????????????---->
+    #            split_by_space-->
+    #           find_interests_index
+
+    words_list = list(map( lambda x: split_by_space(eliminate_MGMNP(eliminate_brackets(elimimate_equals(x))).strip()), phrases))
+    indexes_liste = list(map(find_interests_index, words_list))
+
+
+    # next, for each interest, we need to get the context information
+    context_information = []
+    labels = []
+
+    for i in range(len(indexes_liste)):
+        indexes = indexes_liste[i]
+        for index in indexes:
+            interest = words_list[i][index]
+            class_label = get_interest_class(interest)
+            # eliminate the ...._{class_label}... part in the interest
+            # for example: interests_1/NN ---> interests/NN
+            words_list[i][index] = re.sub(r'_[0-9]', '', interest)
+
+            # append to  labels
+            labels.append(class_label)
+        
+        # append to context_information
+        for j in range(len(indexes)):
+            context_information.append(words_list[i])
+    
+    #distinct two types of context_information: 1 word 2 pos
+    context_information_word = list(map(lambda x: list(map(extract_word, x)), context_information))
+    context_information_pos = list(map(lambda x: list(map(extract_pos, x)), context_information))
+
+    print("context_information_word", context_information_word[0:10])
+    print("context_information_pos", context_information_pos[0:10])
+
+    # next
+    new_indexes_list = [i for index in indexes_liste for i in index]  
+
+
+
+             
+
+
+            
+
+    # interest_class_list = []
+    # for i in range(len(indexes_liste)):
+    #     indexes = indexes_liste[i]
+    #     for index in indexes:
+    #         try:
+    #             interest_class_list.append(get_interest_class(words_list[i][index]))
+    #         except:
+    #             print("error", words_list[i][index])
+    #             print(f"in the {i}st phrase", words_list[i])
+    # print("the interest_class_list is", interest_class_list)
+    # count the number of -1 in the interest_class_list
+
+        
+
+
+
+
     print("word/pos extraction", extract_word("interests_1/NN"))
     print("word/pos extraction", extract_pos("interests_1/NN"))
-    print("find index test", find_interests_index(["yuyang", "giegie", "*interesT", "interest_1/NN"]))
+    print("find index test", find_interests_index(["yuyang", "giegie", "*interesT/NN", "interest_1/NN"]))
 
 
