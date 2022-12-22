@@ -2,14 +2,21 @@ import numpy as np
 import pandas as pd
 import nltk
 import sklearn
-from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
 import regex as re
 from functools import partial
 from sys import argv
+from nltk.stem import SnowballStemmer
 
+stoplist_path = "stoplist-english.txt"
 
-
+def stoplists():
+    stoplist = []
+    with open(stoplist_path) as file:
+        for i in file :
+            stoplist.append(i.strip())
+    return stoplist
 
 def eliminate_brackets(str):
     return re.sub(r'\[|\]', '', str)
@@ -34,7 +41,6 @@ def extract_pos(str):
         print("error", str)
         return None
 
-
 def get_interest_class(str):
     """
     Interest_n/{string} ---> n
@@ -51,7 +57,6 @@ def find_interests_index(liste):
     find all the index of interests(^(?i)interests?_?[0-9]?) in a list of words 
     for example:["yuyang", "giegie", "*interesT/NN", "interest_1/NN"] ---> [2, 3]
     """
-    result = [i for i, word in enumerate(liste) if re.search(r'^(?i)interests?_[0-9]?', word)]
     # write a version using loop
     result = []
     for i in range(len(liste)):
@@ -84,8 +89,26 @@ def get_context(index_liste, window_size):
             result.append(liste[i])
     return result
 
-
-
+def eliminate_stopwords(liste):
+    """
+    eliminate a word if it contains a stopword 
+    example :"qsdqfqefd now/RB dasdqwdfqwfd"->"qsdqfqefd dasdqwdfqwfd"
+    example :"and/CC elsewhere/RB ,/, now/RB will/MD be/VB watching/VBG [ the/DT american/JJ presidency/NN ]"->" elsewhere/RB ,/,  watching/VBG [  american/JJ presidency/NN ]"
+    """
+    stoplist = stoplists()
+    words = split_by_space(liste)
+    result = []
+    for word in words:
+        if extract_word(word) not in stoplist:
+            result.append(word)
+    return " ".join(result)
+    
+def snowball_list_stemmer(liste):
+    """
+    stem a list of words
+    """
+    stemmer = SnowballStemmer("english")
+    return list(map(stemmer.stem, liste))
 
 
 if __name__ == "__main__":
@@ -94,7 +117,10 @@ if __name__ == "__main__":
     with open("corpus.txt") as file:
         for i in file :
             if i!="$$\n":
-                phrases.append(i.strip())
+                #stoplist elimination
+                phrases.append(eliminate_stopwords(i.strip()))
+
+    # print(phrases[0])
     # 大的思路是， eliminate_equals---->
     #             eliminate_brackets----->
     #              eliminate_MGMNP------>
@@ -105,6 +131,7 @@ if __name__ == "__main__":
     words_list = list(map( lambda x: split_by_space(eliminate_MGMNP(eliminate_brackets(elimimate_equals(x))).strip()), phrases))
     indexes_liste = list(map(find_interests_index, words_list))
 
+    print(indexes_liste[0])
 
     # next, for each interest, we need to get the context information
     context_information = []
@@ -126,22 +153,55 @@ if __name__ == "__main__":
         for j in range(len(indexes)):
             context_information.append(words_list[i])
     
-    #distinct two types of context_information: 1 word 2 pos
+#     #distinct two types of context_information: 1 word 2 pos
     context_information_word = list(map(lambda x: list(map(extract_word, x)), context_information))
     context_information_pos = list(map(lambda x: list(map(extract_pos, x)), context_information))
 
-    print("context_information_word", context_information_word[0:10])
-    print("context_information_pos", context_information_pos[0:10])
+    # print("context_information_word", context_information_word[0:10])
+    # print("context_information_pos", context_information_pos[0:10])
+
+    steamed_information_word = list(map(snowball_list_stemmer, context_information_word))
+    print("steamed_context_information_word",len(steamed_information_word))
 
     # next, cut context_information according to window_size
-    window_size = int(argv[1])
-    new_indexes_list = [i for index in indexes_liste for i in index]  
+    # window_size = int(argv[1])
+    window_size = 4
+    new_indexes_list = [i for index in indexes_liste for i in index] 
     funct = partial(get_context,  window_size = window_size)
+    steamed_context_word = list(map(funct, zip(new_indexes_list, steamed_information_word)))
     context_word = list(map(funct, zip(new_indexes_list, context_information_word)))
     context_pos = list(map(funct, zip(new_indexes_list, context_information_pos)))
 
-    print("context_word", context_word[0:10])
-    print("context_pos", context_pos[0:10])
+
+    stemmed_context_word_ = []
+    for i in range(len(steamed_context_word)):
+        stemmed_context_word_.append(" ".join(steamed_context_word[i]))
+
+    context_word_ = []
+    for i in range(len(context_word)):
+        context_word_.append(" ".join(context_word[i]))
+
+    context_pos_ = []
+    for i in range(len(context_pos)):
+        context_pos_.append(" ".join(context_pos[i]))
+    
+    tfidf = TfidfVectorizer()
+    tf_stemmed_context =tfidf.fit_transform(stemmed_context_word_)
+    tf_context = tfidf.fit_transform(context_word_)
+    tf_pos = tfidf.fit_transform(context_pos_)
+
+    labels = np.array(labels)
+    
+    print(labels)
+
+    
+
+    # print("steamed_context_word_tfidf", steamed_context_word_tfidf.shape)
+    # print("context_word", context_word[0:10])
+    # print("context_pos", context_pos[0:10])
+    # vecotr_stemed_context_word = 
+
+
 
             
 
