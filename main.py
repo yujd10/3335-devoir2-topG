@@ -1,4 +1,3 @@
-import re
 import numpy as np
 import pandas as pd
 import nltk
@@ -6,6 +5,9 @@ import sklearn
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import CountVectorizer
 import regex as re
+from functools import partial
+from sys import argv
+
 
 
 
@@ -67,7 +69,23 @@ def find_interests_index(liste):
     return result
 
 
-#def get_context(indexes, liste, window_size):
+def get_context(index_liste, window_size):
+    """
+        get window_size words before and after the word at index in the liste
+        return a list of these words
+    """
+    index = index_liste[0]
+    liste = index_liste[1]
+    result = []
+    for i in range(index - window_size, index + window_size + 1):
+        if i < 0 or i >= len(liste) or i == index:
+            continue
+        else:
+            result.append(liste[i])
+    return result
+
+
+
 
 
 if __name__ == "__main__":
@@ -115,35 +133,16 @@ if __name__ == "__main__":
     print("context_information_word", context_information_word[0:10])
     print("context_information_pos", context_information_pos[0:10])
 
-    # next
+    # next, cut context_information according to window_size
+    window_size = int(argv[1])
     new_indexes_list = [i for index in indexes_liste for i in index]  
+    funct = partial(get_context,  window_size = window_size)
+    context_word = list(map(funct, zip(new_indexes_list, context_information_word)))
+    context_pos = list(map(funct, zip(new_indexes_list, context_information_pos)))
 
-
-
-             
-
+    print("context_word", context_word[0:10])
+    print("context_pos", context_pos[0:10])
 
             
-
-    # interest_class_list = []
-    # for i in range(len(indexes_liste)):
-    #     indexes = indexes_liste[i]
-    #     for index in indexes:
-    #         try:
-    #             interest_class_list.append(get_interest_class(words_list[i][index]))
-    #         except:
-    #             print("error", words_list[i][index])
-    #             print(f"in the {i}st phrase", words_list[i])
-    # print("the interest_class_list is", interest_class_list)
-    # count the number of -1 in the interest_class_list
-
-        
-
-
-
-
-    print("word/pos extraction", extract_word("interests_1/NN"))
-    print("word/pos extraction", extract_pos("interests_1/NN"))
-    print("find index test", find_interests_index(["yuyang", "giegie", "*interesT/NN", "interest_1/NN"]))
 
 
