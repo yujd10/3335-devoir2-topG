@@ -230,17 +230,57 @@ if __name__ == "__main__":
     #Models:
     # 1. MultinomialNB 
     #a. word context
-    multinomialNB_word = MultinomialNB()
-    multinomialNB_word.fit(word_train_x, word_train_y)
-    socreNB_word=multinomialNB_word.score(word_test_x, word_test_y)
+    #  i. window_size = 1
+    word_nb_1 = MultinomialNB()
+    word_nb_1.fit(word_train_1_x, word_train_1_y)
+    score_word_nb_1 = word_nb_1.score(word_test_1_x, word_test_1_y)
+
+    #  ii. window_size = 2
+    word_nb_2 = MultinomialNB()
+    word_nb_2.fit(word_train_2_x, word_train_2_y)
+    score_word_nb_2 = word_nb_2.score(word_test_2_x, word_test_2_y)
+
+    #  iii. window_size = 3
+    word_nb_3 = MultinomialNB()
+    word_nb_3.fit(word_train_3_x, word_train_3_y)
+    score_word_nb_3 = word_nb_3.score(word_test_3_x, word_test_3_y)
+
+    #  iv. whole context
+    word_nb_whole = MultinomialNB()
+    word_nb_whole.fit(word_train_whole_x, word_train_whole_y)
+    score_word_nb_whole = word_nb_whole.score(word_test_whole_x, word_test_whole_y)
+
+    print("word_nb_1: ", score_word_nb_1)
+    print("word_nb_2: ", score_word_nb_2)
+    print("word_nb_3: ", score_word_nb_3)
+    print("word_nb_whole: ", score_word_nb_whole)
 
     #b. pos context
-    multinomialNB_pos = MultinomialNB()
-    multinomialNB_pos.fit(pos_train_x, pos_train_y)
-    socreNB_pos=multinomialNB_pos.score(pos_test_x, pos_test_y)
+    #  i. window_size = 1
+    pos_nb_1 = MultinomialNB()
+    pos_nb_1.fit(pos_train_1_x, pos_train_1_y)
+    score_pos_nb_1 = pos_nb_1.score(pos_test_1_x, pos_test_1_y) 
 
-    print("MultinomialNB word context accuracy: ", socreNB_word)
-    print("MultinomialNB pos context accuracy: ", socreNB_pos)
+    #  ii. window_size = 2
+    pos_nb_2 = MultinomialNB()
+    pos_nb_2.fit(pos_train_2_x, pos_train_2_y)
+    score_pos_nb_2 = pos_nb_2.score(pos_test_2_x, pos_test_2_y)
+    
+    #  iii. window_size = 3
+    pos_nb_3 = MultinomialNB()
+    pos_nb_3.fit(pos_train_3_x, pos_train_3_y)
+    score_pos_nb_3 = pos_nb_3.score(pos_test_3_x, pos_test_3_y)
+
+    #  iv. whole context
+    pos_nb_whole = MultinomialNB()
+    pos_nb_whole.fit(pos_train_whole_x, pos_train_whole_y)
+    score_pos_nb_whole = pos_nb_whole.score(pos_test_whole_x, pos_test_whole_y)
+
+    print("pos_nb_1: ", score_pos_nb_1)
+    print("pos_nb_2: ", score_pos_nb_2)
+    print("pos_nb_3: ", score_pos_nb_3)
+    print("pos_nb_whole: ", score_pos_nb_whole)
+    
 
 
 
