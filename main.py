@@ -8,6 +8,7 @@ import regex as re
 from functools import partial
 from sys import argv
 from nltk.stem import SnowballStemmer
+from sklearn.naive_bayes import MultinomialNB
 
 stoplist_path = "stoplist-english.txt"
 
@@ -190,15 +191,30 @@ if __name__ == "__main__":
     tf_context = tfidf.fit_transform(context_word_)
     tf_pos = tfidf.fit_transform(context_pos_)
 
-    labels = np.array(labels)
-    
-    print(labels)
+
+    #combine tf_stemmed_context and labels
+    stemmed_context_word_tfidf = (np.concatenate((tf_stemmed_context.toarray(), np.array(labels).reshape(-1,1)), axis = 1))
+    context_word_tfidf = (np.concatenate((tf_context.toarray(), np.array(labels).reshape(-1,1)), axis = 1))
+    context_pos_tfidf = (np.concatenate((tf_pos.toarray(), np.array(labels).reshape(-1,1)), axis = 1))
+
+    stemmed_train,stemmed_test = sklearn.model_selection.train_test_split(stemmed_context_word_tfidf, test_size=0.2, random_state=42)
+    word_train, word_test = sklearn.model_selection.train_test_split(context_word_tfidf, test_size=0.2, random_state=42)
+    pos_train, pos_test = sklearn.model_selection.train_test_split(context_pos_tfidf, test_size=0.2, random_state=42)
+
+    stemmed_train_x, stemmed_train_y,stemmed_test_x, stemmed_test_y = stemmed_train[:,:-1], stemmed_train[:,-1], stemmed_test[:,:-1], stemmed_test[:,-1]
+    word_train_x, word_train_y, word_test_x, word_test_y = word_train[:,:-1], word_train[:,-1], word_test[:,:-1], word_test[:,-1]
+    pos_train_x, pos_train_y, pos_test_x, pos_test_y = pos_train[:,:-1], pos_train[:,-1], pos_test[:,:-1], pos_test[:,-1]
 
     #task: 1. combine train_x and labels
     #      2. split train_x and labels into train and test
     #      3. train the model
     #      4. test the model
+    #      5. get the accuracy
 
+    #Models:
+    # 1. MultinomialNB 
+    multinomialNB = MultinomialNB()
+    multinomialNB.fit(stemmed_train_x, stemmed_train_y)
     
 
     # print("steamed_context_word_tfidf", steamed_context_word_tfidf.shape)
