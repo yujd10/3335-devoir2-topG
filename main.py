@@ -532,7 +532,7 @@ if __name__ == "__main__":
     # 5. multi-layer perceptron
     #a. word context
     #  i. window_size = 1
-    word_mlp_1 = MLPClassifier(max_iter=1000)
+    word_mlp_1 = MLPClassifier(max_iter=1000,hidden_layer_sizes=)
     word_mlp_1.fit(word_train_1_x, word_train_1_y)
     score_word_mlp_1 = word_mlp_1.score(word_test_1_x, word_test_1_y)
 
