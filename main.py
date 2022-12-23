@@ -13,6 +13,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.tree import DecisionTreeClassifier
 from sklearn import svm
 from sklearn.neural_network import MLPClassifier
+import matplotlib.pyplot as plt
 
 stoplist_path = "stoplist-english.txt"
 
@@ -258,6 +259,15 @@ if __name__ == "__main__":
     print("word_nb_3: ", score_word_nb_3)
     print("word_nb_whole: ", score_word_nb_whole)
 
+    # plot the results of different window size
+    plt.figure(figsize=(10, 5))
+    plt.title("Naive Bayes Multinomial Model for word context")
+    plt.plot([1, 2, 3, "+inf"], [score_word_nb_1, score_word_nb_2, score_word_nb_3, score_word_nb_whole], label="word_nb")
+    plt.xlabel("window size")
+    plt.ylabel("accuracy")
+    plt.legend()
+    plt.show()
+
     #b. pos context
     #  i. window_size = 1
     pos_nb_1 = MultinomialNB()
@@ -284,224 +294,317 @@ if __name__ == "__main__":
     print("pos_nb_3: ", score_pos_nb_3)
     print("pos_nb_whole: ", score_pos_nb_whole)
     print("")
+    
+    # plot the results of different window size
+    plt.figure(figsize=(10, 5))
+    plt.title("Naive Bayes Multinomial Model for pos context")
+    plt.plot([1, 2, 3, "+inf"], [score_pos_nb_1, score_pos_nb_2, score_pos_nb_3, score_pos_nb_whole], label="pos_nb")
+    plt.xlabel("window size")
+    plt.ylabel("accuracy")
+    plt.legend()
+    plt.show()
 
     # 2. Decision Tree
     #a. word context
     #  i. window_size = 1
-    word_nb_1 =DecisionTreeClassifier()
-    word_nb_1.fit(word_train_1_x, word_train_1_y)
-    score_word_nb_1 = word_nb_1.score(word_test_1_x, word_test_1_y)
+    word_dt_1 = DecisionTreeClassifier()
+    word_dt_1.fit(word_train_1_x, word_train_1_y)
+    score_word_dt_1 = word_dt_1.score(word_test_1_x, word_test_1_y)
 
     #  ii. window_size = 2
-    word_nb_2 = DecisionTreeClassifier()
-    word_nb_2.fit(word_train_2_x, word_train_2_y)
-    score_word_nb_2 = word_nb_2.score(word_test_2_x, word_test_2_y)
-
+    word_dt_2 = DecisionTreeClassifier()
+    word_dt_2.fit(word_train_2_x, word_train_2_y)
+    score_word_dt_2 = word_dt_2.score(word_test_2_x, word_test_2_y)
+    
     #  iii. window_size = 3
-    word_nb_3 = DecisionTreeClassifier()
-    word_nb_3.fit(word_train_3_x, word_train_3_y)
-    score_word_nb_3 = word_nb_3.score(word_test_3_x, word_test_3_y)
+    word_dt_3 = DecisionTreeClassifier()
+    word_dt_3.fit(word_train_3_x, word_train_3_y)
+    score_word_dt_3 = word_dt_3.score(word_test_3_x, word_test_3_y)
 
     #  iv. whole context
-    word_nb_whole = DecisionTreeClassifier()
-    word_nb_whole.fit(word_train_whole_x, word_train_whole_y)
-    score_word_nb_whole = word_nb_whole.score(word_test_whole_x, word_test_whole_y)
+    word_dt_whole = DecisionTreeClassifier()
+    word_dt_whole.fit(word_train_whole_x, word_train_whole_y)
+    score_word_dt_whole = word_dt_whole.score(word_test_whole_x, word_test_whole_y)
+    
+    print("Decision Tree Model:")
+    print("word_dt_1: ", score_word_dt_1)
+    print("word_dt_2: ", score_word_dt_2)
+    print("word_dt_3: ", score_word_dt_3)
+    print("word_dt_whole: ", score_word_dt_whole)
+    print("")
 
-    print("Decision Tree:")
-    print("word_nb_1: ", score_word_nb_1)
-    print("word_nb_2: ", score_word_nb_2)
-    print("word_nb_3: ", score_word_nb_3)
-    print("word_nb_whole: ", score_word_nb_whole)
+    # plot the results of different window size
+    plt.figure(figsize=(10, 5))
+    plt.title("Decision Tree Model for word context")
+    plt.plot([1, 2, 3, "+inf"], [score_word_dt_1, score_word_dt_2, score_word_dt_3, score_word_dt_whole], label="word_dt")
+    plt.xlabel("window size")
+    plt.ylabel("accuracy")
+    plt.legend()
+    plt.show()
 
     #b. pos context
     #  i. window_size = 1
-    pos_nb_1 = DecisionTreeClassifier() 
-    pos_nb_1.fit(pos_train_1_x, pos_train_1_y)
-    score_pos_nb_1 = pos_nb_1.score(pos_test_1_x, pos_test_1_y) 
+    pos_dt_1 = DecisionTreeClassifier()
+    pos_dt_1.fit(pos_train_1_x, pos_train_1_y)
+    score_pos_dt_1 = pos_dt_1.score(pos_test_1_x, pos_test_1_y)
 
     #  ii. window_size = 2
-    pos_nb_2 = DecisionTreeClassifier()
-    pos_nb_2.fit(pos_train_2_x, pos_train_2_y)
-    score_pos_nb_2 = pos_nb_2.score(pos_test_2_x, pos_test_2_y)
+    pos_dt_2 = DecisionTreeClassifier()
+    pos_dt_2.fit(pos_train_2_x, pos_train_2_y)
+    score_pos_dt_2 = pos_dt_2.score(pos_test_2_x, pos_test_2_y)
     
     #  iii. window_size = 3
-    pos_nb_3 = DecisionTreeClassifier()
-    pos_nb_3.fit(pos_train_3_x, pos_train_3_y)
-    score_pos_nb_3 = pos_nb_3.score(pos_test_3_x, pos_test_3_y)
+    pos_dt_3 = DecisionTreeClassifier()
+    pos_dt_3.fit(pos_train_3_x, pos_train_3_y)
+    score_pos_dt_3 = pos_dt_3.score(pos_test_3_x, pos_test_3_y)
+    
 
     #  iv. whole context
-    pos_nb_whole = DecisionTreeClassifier()
-    pos_nb_whole.fit(pos_train_whole_x, pos_train_whole_y)
-    score_pos_nb_whole = pos_nb_whole.score(pos_test_whole_x, pos_test_whole_y)
+    pos_dt_whole = DecisionTreeClassifier()
+    pos_dt_whole.fit(pos_train_whole_x, pos_train_whole_y)
+    score_pos_dt_whole = pos_dt_whole.score(pos_test_whole_x, pos_test_whole_y)
 
-    print("pos_nb_1: ", score_pos_nb_1)
-    print("pos_nb_2: ", score_pos_nb_2)
-    print("pos_nb_3: ", score_pos_nb_3)
-    print("pos_nb_whole: ", score_pos_nb_whole)
+    print("pos_dt_1: ", score_pos_dt_1)
+    print("pos_dt_2: ", score_pos_dt_2)
+    print("pos_dt_3: ", score_pos_dt_3)
+    print("pos_dt_whole: ", score_pos_dt_whole)
     print("")
+
+    # plot the results of different window size
+    plt.figure(figsize=(10, 5))
+    plt.title("Decision Tree Model for pos context")
+    plt.plot([1, 2, 3, "+inf"], [score_pos_dt_1, score_pos_dt_2, score_pos_dt_3, score_pos_dt_whole], label="pos_dt")
+    plt.xlabel("window size")
+    plt.ylabel("accuracy")
+    plt.legend()
+    plt.show()
 
     # 3. Random Forest
     #a. word context
     #  i. window_size = 1
-    word_nb_1 = RandomForestClassifier()
-    word_nb_1.fit(word_train_1_x, word_train_1_y)
-    score_word_nb_1 = word_nb_1.score(word_test_1_x, word_test_1_y)
+    word_rf_1 = RandomForestClassifier()
+    word_rf_1.fit(word_train_1_x, word_train_1_y)
+    score_word_rf_1 = word_rf_1.score(word_test_1_x, word_test_1_y)
 
     #  ii. window_size = 2
-    word_nb_2 = RandomForestClassifier()
-    word_nb_2.fit(word_train_2_x, word_train_2_y)
-    score_word_nb_2 = word_nb_2.score(word_test_2_x, word_test_2_y)
+    word_rf_2 = RandomForestClassifier()
+    word_rf_2.fit(word_train_2_x, word_train_2_y)
+    score_word_rf_2 = word_rf_2.score(word_test_2_x, word_test_2_y)
 
     #  iii. window_size = 3
-    word_nb_3 = RandomForestClassifier()
-    word_nb_3.fit(word_train_3_x, word_train_3_y)
-    score_word_nb_3 = word_nb_3.score(word_test_3_x, word_test_3_y)
+    word_rf_3 = RandomForestClassifier()
+    word_rf_3.fit(word_train_3_x, word_train_3_y)
+    score_word_rf_3 = word_rf_3.score(word_test_3_x, word_test_3_y)
 
     #  iv. whole context
-    word_nb_whole = RandomForestClassifier()
-    word_nb_whole.fit(word_train_whole_x, word_train_whole_y)
-    score_word_nb_whole = word_nb_whole.score(word_test_whole_x, word_test_whole_y)
+    word_rf_whole = RandomForestClassifier()
+    word_rf_whole.fit(word_train_whole_x, word_train_whole_y)
+    score_word_rf_whole = word_rf_whole.score(word_test_whole_x, word_test_whole_y)
 
-    print("Random Forest:")
-    print("word_nb_1: ", score_word_nb_1)
-    print("word_nb_2: ", score_word_nb_2)
-    print("word_nb_3: ", score_word_nb_3)
-    print("word_nb_whole: ", score_word_nb_whole)
-
-    #b. pos context
-    #  i. window_size = 1
-    pos_nb_1 = RandomForestClassifier()
-    pos_nb_1.fit(pos_train_1_x, pos_train_1_y)
-    score_pos_nb_1 = pos_nb_1.score(pos_test_1_x, pos_test_1_y) 
-
-    #  ii. window_size = 2
-    pos_nb_2 = RandomForestClassifier()
-    pos_nb_2.fit(pos_train_2_x, pos_train_2_y)
-    score_pos_nb_2 = pos_nb_2.score(pos_test_2_x, pos_test_2_y)
-    
-    #  iii. window_size = 3
-    pos_nb_3 = RandomForestClassifier()
-    pos_nb_3.fit(pos_train_3_x, pos_train_3_y)
-    score_pos_nb_3 = pos_nb_3.score(pos_test_3_x, pos_test_3_y)
-
-    #  iv. whole context
-    pos_nb_whole = RandomForestClassifier()
-    pos_nb_whole.fit(pos_train_whole_x, pos_train_whole_y)
-    score_pos_nb_whole = pos_nb_whole.score(pos_test_whole_x, pos_test_whole_y)
-
-    print("pos_nb_1: ", score_pos_nb_1)
-    print("pos_nb_2: ", score_pos_nb_2)
-    print("pos_nb_3: ", score_pos_nb_3)
-    print("pos_nb_whole: ", score_pos_nb_whole)
+    print("Random Forest Model:")
+    print("word_rf_1: ", score_word_rf_1)
+    print("word_rf_2: ", score_word_rf_2)
+    print("word_rf_3: ", score_word_rf_3)
+    print("word_rf_whole: ", score_word_rf_whole)
     print("")
 
-    # 4. SVM
-    #a. word context
-    #  i. window_size = 1
-    word_nb_1 = svm.SVC()
-    word_nb_1.fit(word_train_1_x, word_train_1_y)
-    score_word_nb_1 = word_nb_1.score(word_test_1_x, word_test_1_y)
-
-    #  ii. window_size = 2
-    word_nb_2 = svm.SVC()
-    word_nb_2.fit(word_train_2_x, word_train_2_y)
-    score_word_nb_2 = word_nb_2.score(word_test_2_x, word_test_2_y)
-
-    #  iii. window_size = 3
-    word_nb_3 = svm.SVC()
-    word_nb_3.fit(word_train_3_x, word_train_3_y)
-    score_word_nb_3 = word_nb_3.score(word_test_3_x, word_test_3_y)
-
-    #  iv. whole context
-    word_nb_whole = svm.SVC()
-    word_nb_whole.fit(word_train_whole_x, word_train_whole_y)
-    score_word_nb_whole = word_nb_whole.score(word_test_whole_x, word_test_whole_y)
-
-    print("SVM:")
-    print("word_nb_1: ", score_word_nb_1)
-    print("word_nb_2: ", score_word_nb_2)
-    print("word_nb_3: ", score_word_nb_3)
-    print("word_nb_whole: ", score_word_nb_whole)
+    # plot the results of different window size
+    plt.figure(figsize=(10, 5))
+    plt.title("Random Forest Model for word context")
+    plt.plot([1, 2, 3, "+inf"], [score_word_rf_1, score_word_rf_2, score_word_rf_3, score_word_rf_whole], label="word_rf")
+    plt.xlabel("window size")
+    plt.ylabel("accuracy")
+    plt.legend()
+    plt.show()
 
     #b. pos context
     #  i. window_size = 1
-    pos_nb_1 = svm.SVC()
-    pos_nb_1.fit(pos_train_1_x, pos_train_1_y)
-    score_pos_nb_1 = pos_nb_1.score(pos_test_1_x, pos_test_1_y) 
+    pos_rf_1 = RandomForestClassifier()
+    pos_rf_1.fit(pos_train_1_x, pos_train_1_y)
+    score_pos_rf_1 = pos_rf_1.score(pos_test_1_x, pos_test_1_y)
+    
 
     #  ii. window_size = 2
-    pos_nb_2 = svm.SVC()
-    pos_nb_2.fit(pos_train_2_x, pos_train_2_y)
-    score_pos_nb_2 = pos_nb_2.score(pos_test_2_x, pos_test_2_y)
-    
+    pos_rf_2 = RandomForestClassifier()
+    pos_rf_2.fit(pos_train_2_x, pos_train_2_y)
+    score_pos_rf_2 = pos_rf_2.score(pos_test_2_x, pos_test_2_y)
+
     #  iii. window_size = 3
-    pos_nb_3 = svm.SVC()
-    pos_nb_3.fit(pos_train_3_x, pos_train_3_y)
-    score_pos_nb_3 = pos_nb_3.score(pos_test_3_x, pos_test_3_y)
+    pos_rf_3 = RandomForestClassifier()
+    pos_rf_3.fit(pos_train_3_x, pos_train_3_y)
+    score_pos_rf_3 = pos_rf_3.score(pos_test_3_x, pos_test_3_y)
 
     #  iv. whole context
-    pos_nb_whole = svm.SVC()
-    pos_nb_whole.fit(pos_train_whole_x, pos_train_whole_y)
-    score_pos_nb_whole = pos_nb_whole.score(pos_test_whole_x, pos_test_whole_y)
+    pos_rf_whole = RandomForestClassifier()
+    pos_rf_whole.fit(pos_train_whole_x, pos_train_whole_y)
+    score_pos_rf_whole = pos_rf_whole.score(pos_test_whole_x, pos_test_whole_y)
+    
+    print("pos_rf_1: ", score_pos_rf_1)
+    print("pos_rf_2: ", score_pos_rf_2)
+    print("pos_rf_3: ", score_pos_rf_3)
+    print("pos_rf_whole: ", score_pos_rf_whole)
+    print("")
 
-    print("pos_nb_1: ", score_pos_nb_1)
-    print("pos_nb_2: ", score_pos_nb_2)
-    print("pos_nb_3: ", score_pos_nb_3)
-    print("pos_nb_whole: ", score_pos_nb_whole)
+    # plot the results of different window size
+    plt.figure(figsize=(10, 5))
+    plt.title("Random Forest Model for pos context")
+    plt.plot([1, 2, 3, "+inf"], [score_pos_rf_1, score_pos_rf_2, score_pos_rf_3, score_pos_rf_whole], label="pos_rf")
+    plt.xlabel("window size")
+    plt.ylabel("accuracy")
+    plt.legend()
+    plt.show()
+
+
+    # 4. svm
+    #a. word context
+    #  i. window_size = 1
+    word_svm_1 = svm.SVC()
+    word_svm_1.fit(word_train_1_x, word_train_1_y)
+    score_word_svm_1 = word_svm_1.score(word_test_1_x, word_test_1_y)
+
+    #  ii. window_size = 2
+    word_svm_2 = svm.SVC()
+    word_svm_2.fit(word_train_2_x, word_train_2_y)
+    score_word_svm_2 = word_svm_2.score(word_test_2_x, word_test_2_y)
+
+    #  iii. window_size = 3
+    word_svm_3 = svm.SVC()
+    word_svm_3.fit(word_train_3_x, word_train_3_y)
+    score_word_svm_3 = word_svm_3.score(word_test_3_x, word_test_3_y)
+
+    #  iv. whole context
+    word_svm_whole = svm.SVC()
+    word_svm_whole.fit(word_train_whole_x, word_train_whole_y)
+    score_word_svm_whole = word_svm_whole.score(word_test_whole_x, word_test_whole_y)
+
+    print("SVM Model:")
+    print("word_svm_1: ", score_word_svm_1)
+    print("word_svm_2: ", score_word_svm_2)
+    print("word_svm_3: ", score_word_svm_3)
+    print("word_svm_whole: ", score_word_svm_whole)
+    print("")
+
+    # plot the results of different window size
+    plt.figure(figsize=(10, 5))
+    plt.title("SVM Model for word context")
+    plt.plot([1, 2, 3, "+inf"], [score_word_svm_1, score_word_svm_2, score_word_svm_3, score_word_svm_whole], label="word_svm")
+    plt.xlabel("window size")
+    plt.ylabel("accuracy")
+    plt.legend()
+    plt.show()
+
+    #b. pos context
+    #  i. window_size = 1
+    pos_svm_1 = svm.SVC()
+    pos_svm_1.fit(pos_train_1_x, pos_train_1_y)
+    score_pos_svm_1 = pos_svm_1.score(pos_test_1_x, pos_test_1_y)
+    
+    #  ii. window_size = 2
+    pos_svm_2 = svm.SVC()
+    pos_svm_2.fit(pos_train_2_x, pos_train_2_y)
+    score_pos_svm_2 = pos_svm_2.score(pos_test_2_x, pos_test_2_y)
+
+    #  iii. window_size = 3
+    pos_svm_3 = svm.SVC()
+    pos_svm_3.fit(pos_train_3_x, pos_train_3_y)
+    score_pos_svm_3 = pos_svm_3.score(pos_test_3_x, pos_test_3_y)
+
+    #  iv. whole context
+    pos_svm_whole = svm.SVC()
+    pos_svm_whole.fit(pos_train_whole_x, pos_train_whole_y)
+    score_pos_svm_whole = pos_svm_whole.score(pos_test_whole_x, pos_test_whole_y)
+
+    print("pos_svm_1: ", score_pos_svm_1)
+    print("pos_svm_2: ", score_pos_svm_2)
+    print("pos_svm_3: ", score_pos_svm_3)
+    print("pos_svm_whole: ", score_pos_svm_whole)
     print("")
     
-            
-    # 5. MultiLayer Perceptron
+    # plot the results of different window size
+    plt.figure(figsize=(10, 5))
+    plt.title("SVM Model for pos context")
+    plt.plot([1, 2, 3, "+inf"], [score_pos_svm_1, score_pos_svm_2, score_pos_svm_3, score_pos_svm_whole], label="pos_svm")
+    plt.xlabel("window size")
+    plt.ylabel("accuracy")
+    plt.legend()
+    plt.show()
+
+    # 5. multi-layer perceptron
     #a. word context
     #  i. window_size = 1
-    word_nb_1 = MLPClassifier(max_iter=1000)
-    word_nb_1.fit(word_train_1_x, word_train_1_y)
-    score_word_nb_1 = word_nb_1.score(word_test_1_x, word_test_1_y)
+    word_mlp_1 = MLPClassifier(max_iter=1000)
+    word_mlp_1.fit(word_train_1_x, word_train_1_y)
+    score_word_mlp_1 = word_mlp_1.score(word_test_1_x, word_test_1_y)
 
     #  ii. window_size = 2
-    word_nb_2 = MLPClassifier(max_iter=1000)
-    word_nb_2.fit(word_train_2_x, word_train_2_y)
-    score_word_nb_2 = word_nb_2.score(word_test_2_x, word_test_2_y)
+    word_mlp_2 = MLPClassifier(max_iter=1000)
+    word_mlp_2.fit(word_train_2_x, word_train_2_y)
+    score_word_mlp_2 = word_mlp_2.score(word_test_2_x, word_test_2_y)
 
     #  iii. window_size = 3
-    word_nb_3 = MLPClassifier(max_iter=1000)
-    word_nb_3.fit(word_train_3_x, word_train_3_y)
-    score_word_nb_3 = word_nb_3.score(word_test_3_x, word_test_3_y)
+    word_mlp_3 = MLPClassifier(max_iter=1000)
+    word_mlp_3.fit(word_train_3_x, word_train_3_y)
+    score_word_mlp_3 = word_mlp_3.score(word_test_3_x, word_test_3_y)
 
     #  iv. whole context
-    word_nb_whole = MLPClassifier(max_iter=1000)
-    word_nb_whole.fit(word_train_whole_x, word_train_whole_y)
-    score_word_nb_whole = word_nb_whole.score(word_test_whole_x, word_test_whole_y)
+    word_mlp_whole = MLPClassifier(max_iter=1000)
+    word_mlp_whole.fit(word_train_whole_x, word_train_whole_y)
+    score_word_mlp_whole = word_mlp_whole.score(word_test_whole_x, word_test_whole_y)
 
-    print("MultiLayer Perceptron:")
-    print("word_nb_1: ", score_word_nb_1)
-    print("word_nb_2: ", score_word_nb_2)
-    print("word_nb_3: ", score_word_nb_3)
-    print("word_nb_whole: ", score_word_nb_whole)
+    print("MLP Model:")
+    print("word_mlp_1: ", score_word_mlp_1)
+    print("word_mlp_2: ", score_word_mlp_2)
+    print("word_mlp_3: ", score_word_mlp_3)
+    print("word_mlp_whole: ", score_word_mlp_whole)
+    print("")
+
+    # plot the results of different window size
+    plt.figure(figsize=(10, 5))
+    plt.title("MLP Model for word context")
+    plt.plot([1, 2, 3, "+inf"], [score_word_mlp_1, score_word_mlp_2, score_word_mlp_3, score_word_mlp_whole], label="word_mlp")
+    plt.xlabel("window size")
+    plt.ylabel("accuracy")
+    plt.legend()
+    plt.show()
 
     #b. pos context
     #  i. window_size = 1
-    pos_nb_1 = MLPClassifier(max_iter=2000)
-    pos_nb_1.fit(pos_train_1_x, pos_train_1_y)
-    score_pos_nb_1 = pos_nb_1.score(pos_test_1_x, pos_test_1_y) 
+    pos_mlp_1 = MLPClassifier(max_iter=1000)
+    pos_mlp_1.fit(pos_train_1_x, pos_train_1_y)
+    score_pos_mlp_1 = pos_mlp_1.score(pos_test_1_x, pos_test_1_y)
 
     #  ii. window_size = 2
-    pos_nb_2 = MLPClassifier(max_iter=2000)
-    pos_nb_2.fit(pos_train_2_x, pos_train_2_y)
-    score_pos_nb_2 = pos_nb_2.score(pos_test_2_x, pos_test_2_y)
+    pos_mlp_2 = MLPClassifier(max_iter=1000)
+    pos_mlp_2.fit(pos_train_2_x, pos_train_2_y)
+    score_pos_mlp_2 = pos_mlp_2.score(pos_test_2_x, pos_test_2_y)
     
     #  iii. window_size = 3
-    pos_nb_3 = MLPClassifier(max_iter=2000)
-    pos_nb_3.fit(pos_train_3_x, pos_train_3_y)
-    score_pos_nb_3 = pos_nb_3.score(pos_test_3_x, pos_test_3_y)
+    pos_mlp_3 = MLPClassifier(max_iter=1000)
+    pos_mlp_3.fit(pos_train_3_x, pos_train_3_y)
+    score_pos_mlp_3 = pos_mlp_3.score(pos_test_3_x, pos_test_3_y)
 
     #  iv. whole context
-    pos_nb_whole = MLPClassifier(max_iter=2000)
-    pos_nb_whole.fit(pos_train_whole_x, pos_train_whole_y)
-    score_pos_nb_whole = pos_nb_whole.score(pos_test_whole_x, pos_test_whole_y)
+    pos_mlp_whole = MLPClassifier(max_iter=1000)
+    pos_mlp_whole.fit(pos_train_whole_x, pos_train_whole_y)
+    score_pos_mlp_whole = pos_mlp_whole.score(pos_test_whole_x, pos_test_whole_y)
 
-    print("pos_nb_1: ", score_pos_nb_1)
-    print("pos_nb_2: ", score_pos_nb_2)
-    print("pos_nb_3: ", score_pos_nb_3)
-    print("pos_nb_whole: ", score_pos_nb_whole)
+    print("pos_mlp_1: ", score_pos_mlp_1)
+    print("pos_mlp_2: ", score_pos_mlp_2)
+    print("pos_mlp_3: ", score_pos_mlp_3)
+    print("pos_mlp_whole: ", score_pos_mlp_whole)
+    print("")
 
+    # plot the results of different window size
+    plt.figure(figsize=(10, 5))
+    plt.title("MLP Model for pos context")
+    plt.plot([1, 2, 3, "+inf"], [score_pos_mlp_1, score_pos_mlp_2, score_pos_mlp_3, score_pos_mlp_whole], label="pos_mlp")
+    plt.xlabel("window size")
+    plt.ylabel("accuracy")
+    plt.legend()
+    plt.show()
+
+
+
+ 
+
+    
