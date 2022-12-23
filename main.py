@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import nltk
 import sklearn
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
 import regex as re
@@ -9,6 +10,7 @@ from functools import partial
 from sys import argv
 from nltk.stem import SnowballStemmer
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.tree import DecisionTreeClassifier
 
 stoplist_path = "stoplist-english.txt"
 
@@ -111,6 +113,35 @@ def snowball_list_stemmer(liste):
     stemmer = SnowballStemmer("english")
     return list(map(stemmer.stem, liste))
 
+def cut_context(index_liste,context,window_size):
+    """
+    cut the context into two parts, one is the left part, the other is the right part
+    """
+    new_indexes_list = [i for index in index_liste for i in index] 
+    funct = partial(get_context,  window_size = window_size)
+    return list(map(funct, zip(new_indexes_list, context)))
+
+def tf_idf_vectorize_data(context):
+    """
+    split the data into training set and test set
+    """
+    new_context = []
+    for i in range(len(context)):
+        new_context.append(" ".join(context[i]))
+    new_context = np.array(new_context)
+
+    tfidf = TfidfVectorizer()
+    res = tfidf.fit_transform(new_context)
+    return res
+
+def split_data(data, labels, test_size = 0.2):
+    """
+    split the data into training set and test set
+    """
+    x_and_y = (np.concatenate((data.toarray(),labels.reshape(-1,1)), axis = 1))
+    train, test = sklearn.model_selection.train_test_split(x_and_y, test_size = test_size,random_state=42)
+    return train[:,:-1], train[:,-1], test[:,:-1], test[:,-1]
+
 
 if __name__ == "__main__":
     count = 0
@@ -154,73 +185,63 @@ if __name__ == "__main__":
         for j in range(len(indexes)):
             context_information.append(words_list[i])
     
-#     #distinct two types of context_information: 1 word 2 pos
+    #distinct two types of context_information: 1 word 2 pos 3 steamed word
     context_information_word = list(map(lambda x: list(map(extract_word, x)), context_information))
     context_information_pos = list(map(lambda x: list(map(extract_pos, x)), context_information))
-
-    # print("context_information_word", context_information_word[0:10])
-    # print("context_information_pos", context_information_pos[0:10])
-
-    steamed_information_word = list(map(snowball_list_stemmer, context_information_word))
-    print("steamed_context_information_word",len(steamed_information_word))
+    context_information_word = list(map(snowball_list_stemmer, context_information_word))
 
     # next, cut context_information according to window_size
-    # window_size = int(argv[1])
-    window_size = 4
-    new_indexes_list = [i for index in indexes_liste for i in index] 
-    funct = partial(get_context,  window_size = window_size)
-    steamed_context_word = list(map(funct, zip(new_indexes_list, steamed_information_word)))
-    context_word = list(map(funct, zip(new_indexes_list, context_information_word)))
-    context_pos = list(map(funct, zip(new_indexes_list, context_information_pos)))
+    # case: window_size = 1
+    context_word_1 = cut_context(indexes_liste, context_information_word, 1)
+    context_pos_1 = cut_context(indexes_liste, context_information_pos, 1)
+    tf_word_1 = tf_idf_vectorize_data(context_word_1)
+    tf_pos_1 = tf_idf_vectorize_data(context_pos_1)
 
+    word_train_1_x, word_train_1_y, word_test_1_x, word_test_1_y = split_data(tf_word_1, np.array(labels))
+    pos_train_1_x, pos_train_1_y, pos_test_1_x, pos_test_1_y = split_data(tf_pos_1, np.array(labels))
 
-    stemmed_context_word_ = []
-    for i in range(len(steamed_context_word)):
-        stemmed_context_word_.append(" ".join(steamed_context_word[i]))
+    # case: window_size = 2
+    context_word_2 = cut_context(indexes_liste, context_information_word, 2)
+    context_pos_2 = cut_context(indexes_liste, context_information_pos, 2)
+    tf_word_2 = tf_idf_vectorize_data(context_word_2)
+    tf_pos_2 = tf_idf_vectorize_data(context_pos_2)
 
-    context_word_ = []
-    for i in range(len(context_word)):
-        context_word_.append(" ".join(context_word[i]))
+    word_train_2_x, word_train_2_y, word_test_2_x, word_test_2_y = split_data(tf_word_2, np.array(labels))
+    pos_train_2_x, pos_train_2_y, pos_test_2_x, pos_test_2_y = split_data(tf_pos_2, np.array(labels))
 
-    context_pos_ = []
-    for i in range(len(context_pos)):
-        context_pos_.append(" ".join(context_pos[i]))
-    
-    tfidf = TfidfVectorizer()
-    tf_stemmed_context =tfidf.fit_transform(stemmed_context_word_)
-    tf_context = tfidf.fit_transform(context_word_)
-    tf_pos = tfidf.fit_transform(context_pos_)
+    # case: window_size = 3
+    context_word_3 = cut_context(indexes_liste, context_information_word, 3)
+    context_pos_3 = cut_context(indexes_liste, context_information_pos, 3)
+    tf_word_3 = tf_idf_vectorize_data(context_word_3)
+    tf_pos_3 = tf_idf_vectorize_data(context_pos_3)
 
+    word_train_3_x, word_train_3_y, word_test_3_x, word_test_3_y = split_data(tf_word_3, np.array(labels))
+    pos_train_3_x, pos_train_3_y, pos_test_3_x, pos_test_3_y = split_data(tf_pos_3, np.array(labels))
 
-    #combine tf_stemmed_context and labels
-    stemmed_context_word_tfidf = (np.concatenate((tf_stemmed_context.toarray(), np.array(labels).reshape(-1,1)), axis = 1))
-    context_word_tfidf = (np.concatenate((tf_context.toarray(), np.array(labels).reshape(-1,1)), axis = 1))
-    context_pos_tfidf = (np.concatenate((tf_pos.toarray(), np.array(labels).reshape(-1,1)), axis = 1))
+    # case: whole context
+    context_word_whole = context_information_word
+    context_pos_whole = context_information_pos
+    tf_word_whole = tf_idf_vectorize_data(context_word_whole)
+    tf_pos_whole = tf_idf_vectorize_data(context_pos_whole)
 
-    stemmed_train,stemmed_test = sklearn.model_selection.train_test_split(stemmed_context_word_tfidf, test_size=0.2, random_state=42)
-    word_train, word_test = sklearn.model_selection.train_test_split(context_word_tfidf, test_size=0.2, random_state=42)
-    pos_train, pos_test = sklearn.model_selection.train_test_split(context_pos_tfidf, test_size=0.2, random_state=42)
-
-    stemmed_train_x, stemmed_train_y,stemmed_test_x, stemmed_test_y = stemmed_train[:,:-1], stemmed_train[:,-1], stemmed_test[:,:-1], stemmed_test[:,-1]
-    word_train_x, word_train_y, word_test_x, word_test_y = word_train[:,:-1], word_train[:,-1], word_test[:,:-1], word_test[:,-1]
-    pos_train_x, pos_train_y, pos_test_x, pos_test_y = pos_train[:,:-1], pos_train[:,-1], pos_test[:,:-1], pos_test[:,-1]
-
-    #task: 1. combine train_x and labels
-    #      2. split train_x and labels into train and test
-    #      3. train the model
-    #      4. test the model
-    #      5. get the accuracy
+    word_train_whole_x, word_train_whole_y, word_test_whole_x, word_test_whole_y = split_data(tf_word_whole, np.array(labels))
+    pos_train_whole_x, pos_train_whole_y, pos_test_whole_x, pos_test_whole_y = split_data(tf_pos_whole, np.array(labels))
 
     #Models:
     # 1. MultinomialNB 
-    multinomialNB = MultinomialNB()
-    multinomialNB.fit(stemmed_train_x, stemmed_train_y)
-    
+    #a. word context
+    multinomialNB_word = MultinomialNB()
+    multinomialNB_word.fit(word_train_x, word_train_y)
+    socreNB_word=multinomialNB_word.score(word_test_x, word_test_y)
 
-    # print("steamed_context_word_tfidf", steamed_context_word_tfidf.shape)
-    # print("context_word", context_word[0:10])
-    # print("context_pos", context_pos[0:10])
-    # vecotr_stemed_context_word = 
+    #b. pos context
+    multinomialNB_pos = MultinomialNB()
+    multinomialNB_pos.fit(pos_train_x, pos_train_y)
+    socreNB_pos=multinomialNB_pos.score(pos_test_x, pos_test_y)
+
+    print("MultinomialNB word context accuracy: ", socreNB_word)
+    print("MultinomialNB pos context accuracy: ", socreNB_pos)
+
 
 
 
