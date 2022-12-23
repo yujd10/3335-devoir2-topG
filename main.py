@@ -252,7 +252,7 @@ if __name__ == "__main__":
     word_nb_whole.fit(word_train_whole_x, word_train_whole_y)
     score_word_nb_whole = word_nb_whole.score(word_test_whole_x, word_test_whole_y)
 
-    print("Naive Bayes:")
+    print("Naive Bayes Multinomial Model:")
     print("word_nb_1: ", score_word_nb_1)
     print("word_nb_2: ", score_word_nb_2)
     print("word_nb_3: ", score_word_nb_3)
