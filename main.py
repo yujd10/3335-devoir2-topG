@@ -11,6 +11,8 @@ from sys import argv
 from nltk.stem import SnowballStemmer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.tree import DecisionTreeClassifier
+from sklearn import svm
+from sklearn.neural_network import MLPClassifier
 
 stoplist_path = "stoplist-english.txt"
 
@@ -163,7 +165,7 @@ if __name__ == "__main__":
     words_list = list(map( lambda x: split_by_space(eliminate_MGMNP(eliminate_brackets(elimimate_equals(x))).strip()), phrases))
     indexes_liste = list(map(find_interests_index, words_list))
 
-    print(indexes_liste[0])
+    # print(indexes_liste[0])
 
     # next, for each interest, we need to get the context information
     context_information = []
@@ -250,6 +252,7 @@ if __name__ == "__main__":
     word_nb_whole.fit(word_train_whole_x, word_train_whole_y)
     score_word_nb_whole = word_nb_whole.score(word_test_whole_x, word_test_whole_y)
 
+    print("Naive Bayes:")
     print("word_nb_1: ", score_word_nb_1)
     print("word_nb_2: ", score_word_nb_2)
     print("word_nb_3: ", score_word_nb_3)
@@ -280,11 +283,225 @@ if __name__ == "__main__":
     print("pos_nb_2: ", score_pos_nb_2)
     print("pos_nb_3: ", score_pos_nb_3)
     print("pos_nb_whole: ", score_pos_nb_whole)
+    print("")
+
+    # 2. Decision Tree
+    #a. word context
+    #  i. window_size = 1
+    word_nb_1 =DecisionTreeClassifier()
+    word_nb_1.fit(word_train_1_x, word_train_1_y)
+    score_word_nb_1 = word_nb_1.score(word_test_1_x, word_test_1_y)
+
+    #  ii. window_size = 2
+    word_nb_2 = DecisionTreeClassifier()
+    word_nb_2.fit(word_train_2_x, word_train_2_y)
+    score_word_nb_2 = word_nb_2.score(word_test_2_x, word_test_2_y)
+
+    #  iii. window_size = 3
+    word_nb_3 = DecisionTreeClassifier()
+    word_nb_3.fit(word_train_3_x, word_train_3_y)
+    score_word_nb_3 = word_nb_3.score(word_test_3_x, word_test_3_y)
+
+    #  iv. whole context
+    word_nb_whole = DecisionTreeClassifier()
+    word_nb_whole.fit(word_train_whole_x, word_train_whole_y)
+    score_word_nb_whole = word_nb_whole.score(word_test_whole_x, word_test_whole_y)
+
+    print("Decision Tree:")
+    print("word_nb_1: ", score_word_nb_1)
+    print("word_nb_2: ", score_word_nb_2)
+    print("word_nb_3: ", score_word_nb_3)
+    print("word_nb_whole: ", score_word_nb_whole)
+
+    #b. pos context
+    #  i. window_size = 1
+    pos_nb_1 = DecisionTreeClassifier() 
+    pos_nb_1.fit(pos_train_1_x, pos_train_1_y)
+    score_pos_nb_1 = pos_nb_1.score(pos_test_1_x, pos_test_1_y) 
+
+    #  ii. window_size = 2
+    pos_nb_2 = DecisionTreeClassifier()
+    pos_nb_2.fit(pos_train_2_x, pos_train_2_y)
+    score_pos_nb_2 = pos_nb_2.score(pos_test_2_x, pos_test_2_y)
     
+    #  iii. window_size = 3
+    pos_nb_3 = DecisionTreeClassifier()
+    pos_nb_3.fit(pos_train_3_x, pos_train_3_y)
+    score_pos_nb_3 = pos_nb_3.score(pos_test_3_x, pos_test_3_y)
 
+    #  iv. whole context
+    pos_nb_whole = DecisionTreeClassifier()
+    pos_nb_whole.fit(pos_train_whole_x, pos_train_whole_y)
+    score_pos_nb_whole = pos_nb_whole.score(pos_test_whole_x, pos_test_whole_y)
 
+    print("pos_nb_1: ", score_pos_nb_1)
+    print("pos_nb_2: ", score_pos_nb_2)
+    print("pos_nb_3: ", score_pos_nb_3)
+    print("pos_nb_whole: ", score_pos_nb_whole)
+    print("")
 
+    # 3. Random Forest
+    #a. word context
+    #  i. window_size = 1
+    word_nb_1 = RandomForestClassifier()
+    word_nb_1.fit(word_train_1_x, word_train_1_y)
+    score_word_nb_1 = word_nb_1.score(word_test_1_x, word_test_1_y)
 
+    #  ii. window_size = 2
+    word_nb_2 = RandomForestClassifier()
+    word_nb_2.fit(word_train_2_x, word_train_2_y)
+    score_word_nb_2 = word_nb_2.score(word_test_2_x, word_test_2_y)
+
+    #  iii. window_size = 3
+    word_nb_3 = RandomForestClassifier()
+    word_nb_3.fit(word_train_3_x, word_train_3_y)
+    score_word_nb_3 = word_nb_3.score(word_test_3_x, word_test_3_y)
+
+    #  iv. whole context
+    word_nb_whole = RandomForestClassifier()
+    word_nb_whole.fit(word_train_whole_x, word_train_whole_y)
+    score_word_nb_whole = word_nb_whole.score(word_test_whole_x, word_test_whole_y)
+
+    print("Random Forest:")
+    print("word_nb_1: ", score_word_nb_1)
+    print("word_nb_2: ", score_word_nb_2)
+    print("word_nb_3: ", score_word_nb_3)
+    print("word_nb_whole: ", score_word_nb_whole)
+
+    #b. pos context
+    #  i. window_size = 1
+    pos_nb_1 = RandomForestClassifier()
+    pos_nb_1.fit(pos_train_1_x, pos_train_1_y)
+    score_pos_nb_1 = pos_nb_1.score(pos_test_1_x, pos_test_1_y) 
+
+    #  ii. window_size = 2
+    pos_nb_2 = RandomForestClassifier()
+    pos_nb_2.fit(pos_train_2_x, pos_train_2_y)
+    score_pos_nb_2 = pos_nb_2.score(pos_test_2_x, pos_test_2_y)
+    
+    #  iii. window_size = 3
+    pos_nb_3 = RandomForestClassifier()
+    pos_nb_3.fit(pos_train_3_x, pos_train_3_y)
+    score_pos_nb_3 = pos_nb_3.score(pos_test_3_x, pos_test_3_y)
+
+    #  iv. whole context
+    pos_nb_whole = RandomForestClassifier()
+    pos_nb_whole.fit(pos_train_whole_x, pos_train_whole_y)
+    score_pos_nb_whole = pos_nb_whole.score(pos_test_whole_x, pos_test_whole_y)
+
+    print("pos_nb_1: ", score_pos_nb_1)
+    print("pos_nb_2: ", score_pos_nb_2)
+    print("pos_nb_3: ", score_pos_nb_3)
+    print("pos_nb_whole: ", score_pos_nb_whole)
+    print("")
+
+    # 4. SVM
+    #a. word context
+    #  i. window_size = 1
+    word_nb_1 = svm.SVC()
+    word_nb_1.fit(word_train_1_x, word_train_1_y)
+    score_word_nb_1 = word_nb_1.score(word_test_1_x, word_test_1_y)
+
+    #  ii. window_size = 2
+    word_nb_2 = svm.SVC()
+    word_nb_2.fit(word_train_2_x, word_train_2_y)
+    score_word_nb_2 = word_nb_2.score(word_test_2_x, word_test_2_y)
+
+    #  iii. window_size = 3
+    word_nb_3 = svm.SVC()
+    word_nb_3.fit(word_train_3_x, word_train_3_y)
+    score_word_nb_3 = word_nb_3.score(word_test_3_x, word_test_3_y)
+
+    #  iv. whole context
+    word_nb_whole = svm.SVC()
+    word_nb_whole.fit(word_train_whole_x, word_train_whole_y)
+    score_word_nb_whole = word_nb_whole.score(word_test_whole_x, word_test_whole_y)
+
+    print("SVM:")
+    print("word_nb_1: ", score_word_nb_1)
+    print("word_nb_2: ", score_word_nb_2)
+    print("word_nb_3: ", score_word_nb_3)
+    print("word_nb_whole: ", score_word_nb_whole)
+
+    #b. pos context
+    #  i. window_size = 1
+    pos_nb_1 = svm.SVC()
+    pos_nb_1.fit(pos_train_1_x, pos_train_1_y)
+    score_pos_nb_1 = pos_nb_1.score(pos_test_1_x, pos_test_1_y) 
+
+    #  ii. window_size = 2
+    pos_nb_2 = svm.SVC()
+    pos_nb_2.fit(pos_train_2_x, pos_train_2_y)
+    score_pos_nb_2 = pos_nb_2.score(pos_test_2_x, pos_test_2_y)
+    
+    #  iii. window_size = 3
+    pos_nb_3 = svm.SVC()
+    pos_nb_3.fit(pos_train_3_x, pos_train_3_y)
+    score_pos_nb_3 = pos_nb_3.score(pos_test_3_x, pos_test_3_y)
+
+    #  iv. whole context
+    pos_nb_whole = svm.SVC()
+    pos_nb_whole.fit(pos_train_whole_x, pos_train_whole_y)
+    score_pos_nb_whole = pos_nb_whole.score(pos_test_whole_x, pos_test_whole_y)
+
+    print("pos_nb_1: ", score_pos_nb_1)
+    print("pos_nb_2: ", score_pos_nb_2)
+    print("pos_nb_3: ", score_pos_nb_3)
+    print("pos_nb_whole: ", score_pos_nb_whole)
+    print("")
+    
             
+    # 5. MultiLayer Perceptron
+    #a. word context
+    #  i. window_size = 1
+    word_nb_1 = MLPClassifier(max_iter=1000)
+    word_nb_1.fit(word_train_1_x, word_train_1_y)
+    score_word_nb_1 = word_nb_1.score(word_test_1_x, word_test_1_y)
 
+    #  ii. window_size = 2
+    word_nb_2 = MLPClassifier(max_iter=1000)
+    word_nb_2.fit(word_train_2_x, word_train_2_y)
+    score_word_nb_2 = word_nb_2.score(word_test_2_x, word_test_2_y)
+
+    #  iii. window_size = 3
+    word_nb_3 = MLPClassifier(max_iter=1000)
+    word_nb_3.fit(word_train_3_x, word_train_3_y)
+    score_word_nb_3 = word_nb_3.score(word_test_3_x, word_test_3_y)
+
+    #  iv. whole context
+    word_nb_whole = MLPClassifier(max_iter=1000)
+    word_nb_whole.fit(word_train_whole_x, word_train_whole_y)
+    score_word_nb_whole = word_nb_whole.score(word_test_whole_x, word_test_whole_y)
+
+    print("MultiLayer Perceptron:")
+    print("word_nb_1: ", score_word_nb_1)
+    print("word_nb_2: ", score_word_nb_2)
+    print("word_nb_3: ", score_word_nb_3)
+    print("word_nb_whole: ", score_word_nb_whole)
+
+    #b. pos context
+    #  i. window_size = 1
+    pos_nb_1 = MLPClassifier(max_iter=2000)
+    pos_nb_1.fit(pos_train_1_x, pos_train_1_y)
+    score_pos_nb_1 = pos_nb_1.score(pos_test_1_x, pos_test_1_y) 
+
+    #  ii. window_size = 2
+    pos_nb_2 = MLPClassifier(max_iter=2000)
+    pos_nb_2.fit(pos_train_2_x, pos_train_2_y)
+    score_pos_nb_2 = pos_nb_2.score(pos_test_2_x, pos_test_2_y)
+    
+    #  iii. window_size = 3
+    pos_nb_3 = MLPClassifier(max_iter=2000)
+    pos_nb_3.fit(pos_train_3_x, pos_train_3_y)
+    score_pos_nb_3 = pos_nb_3.score(pos_test_3_x, pos_test_3_y)
+
+    #  iv. whole context
+    pos_nb_whole = MLPClassifier(max_iter=2000)
+    pos_nb_whole.fit(pos_train_whole_x, pos_train_whole_y)
+    score_pos_nb_whole = pos_nb_whole.score(pos_test_whole_x, pos_test_whole_y)
+
+    print("pos_nb_1: ", score_pos_nb_1)
+    print("pos_nb_2: ", score_pos_nb_2)
+    print("pos_nb_3: ", score_pos_nb_3)
+    print("pos_nb_whole: ", score_pos_nb_whole)
 
